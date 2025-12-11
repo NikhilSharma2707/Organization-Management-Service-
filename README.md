@@ -6,11 +6,11 @@ We can do the following operations
 - Creating an organization (creates admin user + a tenant collection `org_<name>`).  
 - Getting organization metadata from a master database.  
 - Updating an organization (rename + migrate tenant collection).  
-- Deleting an organization (authorized admin only — removes metadata and the tenant collection).  
+- Deleting an organization (authorized admin only removes metadata and the tenant collection).  
 - Admin login that returns a JWT for subsequent protected operations.
 
 ## Why I built it this way
-- The assignment required a master database plus dynamic collections per organization — I followed that strictly.
+- The assignment required a master database plus dynamic collections per organization I followed that strictly.
 - I used FastAPI because it’s quick to develop, simple to test, and includes built-in OpenAPI docs which are helpful for reviewers.
 - I used MongoDB because the tenant data schema can be flexible, and dynamic collection creation is straightforward.
 - I used JWT for stateless authentication so the API can be horizontally scaled (multiple app instances) without session storage.
@@ -279,3 +279,4 @@ DELETE /org/delete
 You should see 200 responses for each step on a healthy run.
 
 Thankyou for considering this submission
+
