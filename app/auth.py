@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from jose import jwt
 from .config import settings
 
-# Use pbkdf2_sha256 which is secure and does NOT have bcrypt's 72-byte limit.
+
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 def hash_password(password: str) -> str:
