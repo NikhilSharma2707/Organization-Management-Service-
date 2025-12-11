@@ -1,0 +1,26 @@
+﻿from passlib.context import CryptContext
+from datetime import datetime, timedelta
+from jose import jwt
+from .config import settings
+
+# Use pbkdf2_sha256 which is secure and does NOT have bcrypt's 72-byte limit.
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+def verify_password(plain: str, hashed: str) -> bool:
+    return pwd_context.verify(plain, hashed)
+
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (
+        expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    to_encode.update({"exp": expire})
+    token = jwt.encode(
+        to_encode,
+        settings.JWT_SECRET,
+        algorithm=settings.JWT_ALGORITHM
+    )
+    return token

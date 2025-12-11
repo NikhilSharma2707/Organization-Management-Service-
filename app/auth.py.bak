@@ -1,0 +1,27 @@
+# app/auth.py
+from passlib.context import CryptContext
+from datetime import datetime, timedelta
+from jose import jwt
+from .config import settings
+
+# Migration-safe: verify old bcrypt hashes, create bcrypt_sha256 for new hashes
+pwd_context = CryptContext(schemes=["bcrypt_sha256", "bcrypt"], deprecated="auto")
+
+def hash_password(password: str) -> str:
+    """
+    Create a password hash. New hashes will use bcrypt_sha256 (avoids 72-byte limit).
+    """
+    return pwd_context.hash(password)
+
+def verify_password(plain: str, hashed: str) -> bool:
+    """
+    Verify a plaintext password against stored hash. Works with old bcrypt and new bcrypt_sha256.
+    """
+    return pwd_context.verify(plain, hashed)
+
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    token = jwt.encode(to_encode, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
+    return token

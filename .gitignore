@@ -1,0 +1,53 @@
+# -----------------------------
+# Python
+# -----------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.db
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python build
+build/
+dist/
+*.egg-info/
+
+# -----------------------------
+# Editor / IDE
+# -----------------------------
+.vscode/
+.idea/
+*.swp
+
+# -----------------------------
+# Environment variables
+# -----------------------------
+.env
+*.env
+
+# -----------------------------
+# Docker
+# -----------------------------
+__pycache__
+*.log
+*.pid
+
+# Ignore compiled wheels
+*.whl
+
+# -----------------------------
+# OS files
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# FastAPI auto-generated
+# -----------------------------
+openapi.json
