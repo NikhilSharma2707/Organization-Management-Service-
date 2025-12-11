@@ -1,4 +1,4 @@
-# app/main.py
+
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 
@@ -6,7 +6,6 @@ from app.routers import orgs, admin
 
 app = FastAPI(title="Organization Management Service")
 
-# register routers
 app.include_router(orgs.router)
 app.include_router(admin.router)
 
@@ -26,7 +25,7 @@ def custom_openapi():
         routes=app.routes,
     )
 
-    # Add BearerAuth security scheme
+    
     openapi_schema.setdefault("components", {})
     openapi_schema["components"].setdefault("securitySchemes", {})
     openapi_schema["components"]["securitySchemes"]["BearerAuth"] = {
@@ -36,7 +35,7 @@ def custom_openapi():
         "description": "Enter: **Bearer &lt;token>**",
     }
 
-    # Apply the security scheme globally (optional). Remove if you prefer to mark endpoints individually.
+
     openapi_schema.setdefault("security", [])
     openapi_schema["security"].append({"BearerAuth": []})
 
@@ -44,5 +43,4 @@ def custom_openapi():
     return app.openapi_schema
 
 
-# Overwrite the default openapi method with our custom one
 app.openapi = custom_openapi
