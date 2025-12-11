@@ -7,7 +7,7 @@ ORG_COLL = master_db.organizations
 ADMIN_COLL = master_db.admins
 
 def _sanitize_name(name: str) -> str:
-    # limit to letters, digits, underscore, dash, lowercase
+    
     name = name.strip().lower()
     name = re.sub(r'[^a-z0-9_-]+', '_', name)
     return name
@@ -19,7 +19,7 @@ async def create_organization(organization_name: str, email: str, password: str)
     if await org_exists(organization_name):
         raise ValueError("Organization already exists")
     collection_name = f"org_{_sanitize_name(organization_name)}"
-    # create admin entry
+    
     admin_doc = {"email": email, "password": hash_password(password)}
     admin_result = await ADMIN_COLL.insert_one(admin_doc)
     org_doc = {
@@ -29,7 +29,7 @@ async def create_organization(organization_name: str, email: str, password: str)
         "created_at": __import__("datetime").datetime.utcnow()
     }
     org_result = await ORG_COLL.insert_one(org_doc)
-    # create the org collection explicitly (optional)
+    
     await master_db.create_collection(collection_name)
     return {**org_doc, "_id": org_result.inserted_id}
 
@@ -43,21 +43,21 @@ async def admin_login(email: str, password: str):
         return None
     if not verify_password(password, admin["password"]):
         return None
-    # get org by admin_id
+   
     org = await ORG_COLL.find_one({"admin_id": admin["_id"]})
     return {"admin": admin, "org": org}
 
 async def delete_org(organization_name: str, admin_email: str):
-    # verify admin owns this org
+    
     org = await ORG_COLL.find_one({"organization_name": organization_name})
     if not org:
         raise ValueError("Org not found")
     admin = await ADMIN_COLL.find_one({"_id": org["admin_id"]})
     if not admin or admin["email"] != admin_email:
         raise PermissionError("Not authorized")
-    # drop org collection
+    
     await master_db.drop_collection(org["collection_name"])
-    # remove admin and org metadata
+    
     await ADMIN_COLL.delete_one({"_id": admin["_id"]})
     await ORG_COLL.delete_one({"_id": org["_id"]})
     return True
@@ -69,9 +69,9 @@ async def update_org_name(old_name: str, new_name: str):
     if await org_exists(new_name):
         raise ValueError("New organization name already exists")
     new_collection_name = f"org_{_sanitize_name(new_name)}"
-    # rename collection
-    # NOTE: renameCollection is a DB command and requires full namespace if across DBs
+   
+    
     await master_db.command("renameCollection", f"{master_db.name}.{org['collection_name']}", to=f"{master_db.name}.{new_collection_name}")
-    # update org doc
+
     await ORG_COLL.update_one({"_id": org["_id"]}, {"$set": {"organization_name": new_name, "collection_name": new_collection_name}})
     return await ORG_COLL.find_one({"_id": org["_id"]})
