@@ -1,7 +1,7 @@
 import jwt
 from datetime import datetime, timedelta
 
-SECRET = "mysecretkey123"  # replace with your FastAPI settings.JWT_SECRET
+SECRET = "mysecretkey123"  
 ALGORITHM = "HS256"
 
 def create_token():
