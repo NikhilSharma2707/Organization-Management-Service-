@@ -1,10 +1,8 @@
-# app/auth.py
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import jwt
 from .config import settings
 
-# Migration-safe: verify old bcrypt hashes, create bcrypt_sha256 for new hashes
 pwd_context = CryptContext(schemes=["bcrypt_sha256", "bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
